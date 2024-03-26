@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools >= 61.0", "versioneer[toml] == 0.28"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chroniton"
+dynamic = ["version"]
+authors = [
+    {name = "Ross Jennings", email="rossjjennings@gmail.com"},
+]
+
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.15.0",
+    "scipy>=1.2.1",
+    "matplotlib>=2.2.3",
+    "astropy>=3.1",
+]
+
+[tool.versioneer]
+VCS = "git"
+style = "pep440"
+versionfile_source = "chroniton/_version.py"
+versionfile_build = "chroniton/_version.py"
+tag_prefix = "v"
+parentdir_prefix = "chroniton-"
