@@ -50,16 +50,16 @@ class Profile:
         if pol_type in ['AA+BB', 'INTEN']:
             # Total intensity data
             I = profile.flatten()
-            return Profile(I)
+            return cls(I)
         elif pol_type == 'IQUV':
             # Full Stokes data
             I, Q, U, V = profile.reshape(4, -1)
-            return Profile(I, Q, U, V)
+            return cls(I, Q, U, V)
         elif pol_type == 'AABBCRCI':
             # Coherence data - convert to Stokes
             AA, BB, CR, CI = profile.reshape(4, -1)
             I, Q, U, V = coherence_to_stokes(AA, BB, CR, CI, feed_poln)
-            return Profile(I, Q, U, V)
+            return cls(I, Q, U, V)
         else:
             raise ValueError(f"Unrecognized polarization type '{pol_type}'.")
 
