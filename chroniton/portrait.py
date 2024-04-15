@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import astropy.units as u
 
 from .polarization import validate_stokes
 from .utils import fft_roll, symmetrize_limits
@@ -46,7 +47,8 @@ class Portrait:
         arr = fft_roll(arr, shift*self.nbin)
         if sym_lim:
             vmin, vmax = symmetrize_limits(arr, vmin, vmax)
-        pc = ax.pcolormesh(self.phase - shift, self.freq, arr, vmin=vmin, vmax=vmax, **kwargs)
+        freq = self.freq.to(u.MHz).value
+        pc = ax.pcolormesh(self.phase - shift, freq, arr, vmin=vmin, vmax=vmax, **kwargs)
         ax.set_xlabel('Phase (cycles)')
         ax.set_ylabel('Frequency (MHz)')
 

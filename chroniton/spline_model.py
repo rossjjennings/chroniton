@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.interpolate import splev
 from scipy.signal import resample
+import astropy.units as u
 import pickle
 
 from .portrait import Portrait
@@ -43,12 +44,13 @@ class SplineModel:
 
         Parameters
         ----------
-        freqs: Frequencies (in MHz) at which to evaluate the model.
+        freqs: Frequencies (Astropy Quantity) at which to evaluate the model.
         nbin: Number of phase bins to use in the model.
               Data will be resampled if necessary.
         """
+        freqs_MHz = freqs.to(u.MHz).value
         if self.eigvec.shape[1] > 0:
-            proj_port = np.array(splev(freqs, self.tck, der=0, ext=0)).T
+            proj_port = np.array(splev(freqs_MHz, self.tck, der=0, ext=0)).T
             delta_port = np.dot(proj_port, self.eigvec.T)
             port = delta_port + self.mean_prof
         else:
