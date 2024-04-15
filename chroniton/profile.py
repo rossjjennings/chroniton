@@ -46,6 +46,7 @@ class Profile:
 
         pol_type = hdul['SUBINT'].header['POL_TYPE'].upper()
         feed_poln = hdul['PRIMARY'].header['FD_POLN'].upper()
+        hdul.close()
         if pol_type in ['AA+BB', 'INTEN']:
             # Total intensity data
             I = profile.flatten()
@@ -95,8 +96,8 @@ class Profile:
                       the phase where it is minimized.
         """
         adjustment = max(-np.min(self.squared_norm), 0.0)
-        print(f"Adjusting I**2 by {adjustment}")
         adjustment *= fudge_factor
+        print(f"Adjusting I**2 by {adjustment}")
         self.I = np.sqrt(self.I**2 + adjustment)
 
     def plot(self, ax=None, what='IQUV', colors=None, shift=0.0, **kwargs):

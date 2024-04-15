@@ -3,6 +3,8 @@ from scipy.interpolate import splev
 from scipy.signal import resample
 import pickle
 
+from .portrait import Portrait
+
 class SplineModel:
     def __init__(self, mean_prof, eigvec, tck):
         """
@@ -45,11 +47,15 @@ class SplineModel:
         nbin: Number of phase bins to use in the model.
               Data will be resampled if necessary.
         """
-        proj_port = np.array(splev(freqs, self.tck, der=0, ext=0)).T
-        delta_port = np.dot(proj_port, self.eigvec.T)
-        port = delta_port + self.mean_prof
+        if self.eigvec.shape[1] > 0:
+            proj_port = np.array(splev(freqs, self.tck, der=0, ext=0)).T
+            delta_port = np.dot(proj_port, self.eigvec.T)
+            port = delta_port + self.mean_prof
+        else:
+            port = np.broadcast_to(self.mean_prof, (freqs.size, self.mean_prof.size))
+            port = port.copy()
         if nbin is not None and (nbin != self.mean_prof.shape[-1]):
             shift = 0.5 * (nbin**-1 - len(mean_prof)**-1)
             port = scipy.signal.resample(port, nbin, axis=1)
             port = rotate_portrait(port, shift) #resample introduces shift!
-        return port
+        return Portrait(freqs, port)
