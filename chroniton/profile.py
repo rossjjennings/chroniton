@@ -13,15 +13,37 @@ class Profile:
         Create a new profile from I, Q, U, and V arrays.
         If one of Q, U, or V is present, all must be, and all must have the same shape as I.
         """
+        self.set_data(I, Q, U, V)
+
+    def set_data(self, I, Q=None, U=None, V=None):
+        """
+        Set I, Q, U, and V, making sure the shapes match and dependent parameters
+        (full_stokes, shape, nbin) are set accordingly.
+        """
         self.full_stokes, self.shape = validate_stokes(I, Q, U, V)
+        self.nbin = self.shape[-1]
         self.I = I
         if self.full_stokes:
             self.Q = Q
             self.U = U
             self.V = V
 
-        self.nbin = self.shape[-1]
-        self.phase = np.linspace(0, 1, self.nbin, endpoint=False)
+    @property
+    def phase(self):
+        """
+        Array of phase values.
+        """
+        return np.linspace(0, 1, self.nbin, endpoint=False)
+
+    @property
+    def squared_norm(self):
+        """
+        The squared invariant interval (I**2 - Q**2 - U**2 - V**2).
+        """
+        if self.full_stokes:
+            return self.I**2 - self.Q**2 - self.U**2 - self.V**2
+        else:
+            return self.I**2
 
     @classmethod
     def from_file(cls, filename):
@@ -62,16 +84,6 @@ class Profile:
             return cls(I, Q, U, V)
         else:
             raise ValueError(f"Unrecognized polarization type '{pol_type}'.")
-
-    @property
-    def squared_norm(self):
-        """
-        The squared invariant interval (I**2 - Q**2 - U**2 - V**2).
-        """
-        if self.full_stokes:
-            return self.I**2 - self.Q**2 - self.U**2 - self.V**2
-        else:
-            return self.I**2
 
     def normalize(self):
         """
