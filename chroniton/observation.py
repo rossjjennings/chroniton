@@ -9,6 +9,7 @@ from pint import PulsarMJD
 
 from .utils import fft_roll
 from .polarization import validate_stokes, coherence_to_stokes
+from .portrait import Portrait
 
 class Observation:
     def __init__(self, epochs, freq, I, Q=None, U=None, V=None):
@@ -74,3 +75,23 @@ class Observation:
             return cls(epochs, freq, I, Q, U, V)
         else:
             raise ValueError(f"Unrecognized polarization type '{pol_type}'.")
+
+    def avg_portrait(self, noise_weight=True, unit_max=False):
+        I = np.nanmean(self.I, axis=0)
+        if self.full_stokes:
+            Q = np.nanmean(self.Q, axis=0)
+            U = np.nanmean(self.U, axis=0)
+            V = np.nanmean(self.V, axis=0)
+            return Portrait(self.freq, I, Q, U, V)
+        else:
+            return Portrait(self.freq, I)
+
+    def __getitem__(self, key):
+        I = self.I[key, ...]
+        if self.full_stokes:
+            Q = self.Q[key, ...]
+            U = self.U[key, ...]
+            V = self.V[key, ...]
+            return Portrait(self.freq, I, Q, U, V)
+        else:
+            return Portrait(self.freq, I)
