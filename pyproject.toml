@@ -15,6 +15,7 @@ dependencies = [
     "scipy>=1.2.1",
     "matplotlib>=2.2.3",
     "astropy>=3.1",
+    "pint-pulsar",
 ]
 
 [tool.versioneer]

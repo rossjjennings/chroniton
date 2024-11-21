@@ -1,6 +1,7 @@
 from .utils import fft_roll
 from .profile import Profile
 from .spline_model import SplineModel
+from .observation import Observation
 from .toas import toa_fourier
 
 from . import _version
